@@ -21,11 +21,18 @@
     
     
     // 测试AES加密
-    NSString *key = @"mvLBiZsiTbGwrfJB";
+    uint8_t key[] = "mvLBiZsiTbGwrfJB";
+    NSData *dataKey = [NSData dataWithBytes:key length:16];
     NSString *content = @"ABCdefJ10cB3u7LaX+0s";
-    NSString *encryptedStr = [AESUtil encryptAES:content key:key];
-    NSString *decryptStr = [AESUtil decryptWithAESECB5Padding:encryptedStr key:key];
-    NSLog(@"AES Test : content = %@, encryptedStr = %@ (%ld Byte), [After Decrypt] Content = %@", content, encryptedStr, encryptedStr.length, decryptStr);
+    NSData *contentData = [content dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSData *encryptedData = [AESUtil encryptAES:contentData key:dataKey];
+    NSData *decryptData = [AESUtil decryptWithAESECB5Padding:encryptedData key:dataKey];
+    
+    // Print log
+    NSString *encryptedString = [encryptedData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+    NSString *decryptedString = [[NSString alloc] initWithData:decryptData encoding:NSUTF8StringEncoding];
+    NSLog(@"AES Test : content = %@, encryptedStr = %@ (%ld Byte), [After Decrypt] Content = %@", content, encryptedString, encryptedString.length, decryptedString);
     // END - 测试AES加密
 }
 

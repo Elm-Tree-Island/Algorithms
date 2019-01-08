@@ -12,19 +12,19 @@
 /**
  对数据字符串使用AES128/ECB/PKCS5Padding进行加密
  
- @param content 要加密的字符串
+ @param content 要加密的内容
  @param key 所使用的key
- @return 返回的字符串
+ @return 加密后数据
  */
-+ (NSString *)encryptAES:(NSString *)content key:(NSString *)key;
++ (NSData *)encryptAES:(NSData *)content key:(NSData *)key;
 
 /**
  使用AES128/ECB/PKCS5Padding解密字符串
  
- @param encryptStr 要解密的字符串
- @param key 秘钥字符串
- @return 解密后字符串
+ @param encryptedData 要解密的内容
+ @param key 秘钥
+ @return 解密后数据
  */
-+ (NSString *)decryptWithAESECB5Padding:(NSString *)encryptStr key:(NSString *)key;
++ (NSData *)decryptWithAESECB5Padding:(NSData *)encryptedData key:(NSData *)key;
 
 @end

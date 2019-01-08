@@ -10,22 +10,14 @@
 
 @implementation AESUtil
 
-/**
- 对数据字符串使用AES128/ECB/PKCS5Padding进行加密
-
- @param content 要加密的字符串
- @param key 所使用的key
- @return 返回的字符串
- */
-+ (NSString *)encryptAES:(NSString *)content key:(NSString *)key {
-    NSData *contentData = [content dataUsingEncoding:NSUTF8StringEncoding];
-    NSUInteger dataLength = contentData.length;
++ (NSData *)encryptAES:(NSData *)content key:(NSData *)key {
+    NSUInteger dataLength = content.length;
     
     // 为结束符'\0' +1
     int kKeySize = kCCKeySizeAES128;
     char keyPtr[kKeySize + 1];
     memset(keyPtr, 0, sizeof(keyPtr));
-    [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
+    memcpy(keyPtr, key.bytes, key.length);
     
     // 密文长度 <= 明文长度 + BlockSize
     size_t encryptSize = dataLength + kCCBlockSizeAES128;
@@ -38,16 +30,13 @@
                                           keyPtr,
                                           kKeySize,
                                           NULL,
-                                          contentData.bytes,
+                                          content.bytes,
                                           dataLength,
                                           encryptedBytes,
                                           encryptSize,
                                           &actualOutSize);
     if (cryptStatus == kCCSuccess) {
-        // 对加密后的数据进行 base64 编码
-        NSString *result = [[NSData dataWithBytesNoCopy:encryptedBytes length:actualOutSize] base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
-        
-        return result;
+        return [NSData dataWithBytesNoCopy:encryptedBytes length:actualOutSize];
     }
     
     free(encryptedBytes);
@@ -55,23 +44,14 @@
     return nil;
 }
 
-/**
- 使用AES128/ECB/PKCS5Padding解密字符串
-
- @param encryptStr 要解密的字符串
- @param key 秘钥字符串
- @return 解密后字符串
- */
-+ (NSString *)decryptWithAESECB5Padding:(NSString *)encryptStr key:(NSString *)key {
-    NSData *encryptedData = [[NSData alloc] initWithBase64EncodedString:encryptStr options:NSUTF8StringEncoding];
-    
++ (NSData *)decryptWithAESECB5Padding:(NSData *)encryptedData key:(NSData *)key {
     NSUInteger dataLength = encryptedData.length;
     
     // 为结束符'\0' +1
     int kKeySize = kCCKeySizeAES128;
     char keyPtr[kKeySize + 1];
     memset(keyPtr, 0, sizeof(keyPtr));
-    [key getCString:keyPtr maxLength:sizeof(keyPtr) encoding:NSUTF8StringEncoding];
+    memcpy(keyPtr, key.bytes, key.length);
     
     // 密文长度 <= 明文长度 + BlockSize
     size_t decryptSize = dataLength + kCCBlockSizeAES128;
@@ -90,9 +70,7 @@
                                           decryptSize,
                                           &actualOutSize);
     if (cryptStatus == kCCSuccess) {
-        NSString *result = [[NSString alloc] initWithData:[NSData dataWithBytes:decryptedBytes length:actualOutSize] encoding:NSUTF8StringEncoding];
-        
-        return result;
+        return [NSData dataWithBytes:decryptedBytes length:actualOutSize];
     }
     
     free(decryptedBytes);
