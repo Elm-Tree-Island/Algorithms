@@ -86,8 +86,8 @@
 		4D7E57EF21D4B69A002D98FC /* AES */ = {
 			isa = PBXGroup;
 			children = (
-				4D7E57F021D4B69A002D98FC /* AESUtil.m */,
 				4D7E57F121D4B69A002D98FC /* AESUtil.h */,
+				4D7E57F021D4B69A002D98FC /* AESUtil.m */,
 			);
 			path = AES;
 			sourceTree = "<group>";
